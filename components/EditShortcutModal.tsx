@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { X, Link as LinkIcon, Edit2 } from 'lucide-react';
+import { X, Link as LinkIcon, Edit2, Layout, Monitor } from 'lucide-react';
 import { Widget } from '../types';
 import { WIDGET_COLORS } from '../constants';
 
@@ -18,12 +19,14 @@ const EditShortcutModal: React.FC<EditShortcutModalProps> = ({
   onClose,
   onSave,
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Partial<Widget>>({
     url: '',
     title: '',
     iconText: '',
     backgroundColor: WIDGET_COLORS[1].value, // Default Blue
     icon: '',
+    openMethod: 'tab',
+    windowConfig: { widthPercent: 60, heightPercent: 70 },
   });
 
   useEffect(() => {
@@ -35,6 +38,8 @@ const EditShortcutModal: React.FC<EditShortcutModalProps> = ({
           iconText: initialData.iconText || '',
           backgroundColor: initialData.backgroundColor || WIDGET_COLORS[1].value,
           icon: initialData.icon || '',
+          openMethod: initialData.openMethod || 'tab',
+          windowConfig: initialData.windowConfig || { widthPercent: 60, heightPercent: 70 },
         });
       } else {
         // Reset for add
@@ -44,6 +49,8 @@ const EditShortcutModal: React.FC<EditShortcutModalProps> = ({
           iconText: '',
           backgroundColor: WIDGET_COLORS[1].value,
           icon: '',
+          openMethod: 'tab',
+          windowConfig: { widthPercent: 60, heightPercent: 70 },
         });
       }
     }
@@ -68,11 +75,11 @@ const EditShortcutModal: React.FC<EditShortcutModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-[500px] bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-[500px] bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
         
         {/* Header */}
-        <div className="px-6 py-4 flex items-center justify-between border-b border-gray-100">
+        <div className="px-6 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 bg-white z-10">
           <h2 className="text-lg font-semibold text-gray-800">
             {mode === 'add' ? '添加图标' : '编辑图标'} (Edit Icon)
           </h2>
@@ -106,7 +113,7 @@ const EditShortcutModal: React.FC<EditShortcutModalProps> = ({
                 onClick={fetchFavicon}
                 className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors whitespace-nowrap"
               >
-                获取图标 (Get Icon)
+                获取图标
               </button>
             </div>
           </div>
@@ -171,29 +178,75 @@ const EditShortcutModal: React.FC<EditShortcutModalProps> = ({
               />
             </div>
           </div>
-          
-          {/* Preview */}
-          <div className="flex items-center gap-4 mt-2">
-             <div 
-                className="w-20 h-20 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg transition-all"
-                style={{ 
-                    background: formData.backgroundColor,
-                    backgroundImage: formData.icon ? `url(${formData.icon})` : formData.backgroundColor,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                }}
-             >
-                {!formData.icon && formData.iconText}
-             </div>
-             <div className="text-sm text-gray-400">
-                 示例 (Preview)
-             </div>
+
+          {/* Open Method Selection */}
+          <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
+             <label className="text-sm text-gray-500 font-medium">
+               打开方式 (Open Method)
+            </label>
+            <div className="flex p-1 bg-gray-100 rounded-lg">
+                <button 
+                    onClick={() => setFormData({...formData, openMethod: 'tab'})}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-all ${formData.openMethod === 'tab' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                    <Layout size={16} />
+                    新标签页 (Tab)
+                </button>
+                <button 
+                    onClick={() => setFormData({...formData, openMethod: 'window'})}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-all ${formData.openMethod === 'window' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                    <Monitor size={16} />
+                    窗口模式 (Window)
+                </button>
+            </div>
           </div>
+
+          {/* Window Configuration (Only if Window is selected) */}
+          {formData.openMethod === 'window' && (
+              <div className="space-y-4 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="flex items-center justify-between">
+                       <label className="text-sm text-gray-500 font-medium">初始宽度: {formData.windowConfig?.widthPercent}%</label>
+                       <input 
+                        type="range" 
+                        min="20" 
+                        max="100" 
+                        value={formData.windowConfig?.widthPercent || 60} 
+                        onChange={(e) => setFormData(prev => ({
+                            ...prev, 
+                            windowConfig: { 
+                                heightPercent: prev.windowConfig?.heightPercent || 60,
+                                widthPercent: parseInt(e.target.value) 
+                            }
+                        }))}
+                        className="w-48 accent-blue-500 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                       />
+                  </div>
+                  <div className="flex items-center justify-between">
+                       <label className="text-sm text-gray-500 font-medium">初始高度: {formData.windowConfig?.heightPercent}%</label>
+                       <input 
+                        type="range" 
+                        min="20" 
+                        max="100" 
+                        value={formData.windowConfig?.heightPercent || 70} 
+                        onChange={(e) => setFormData(prev => ({
+                            ...prev, 
+                            windowConfig: { 
+                                widthPercent: prev.windowConfig?.widthPercent || 60,
+                                heightPercent: parseInt(e.target.value) 
+                            }
+                        }))}
+                        className="w-48 accent-blue-500 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                       />
+                  </div>
+                  <p className="text-xs text-gray-400">注意：部分网站可能会拒绝在 iframe 窗口中显示。</p>
+              </div>
+          )}
 
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-100 bg-gray-50/50">
+        <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-100 bg-gray-50/50 sticky bottom-0 z-10">
           <button 
             onClick={onClose}
             className="px-6 py-2 rounded-full border border-gray-200 text-gray-600 text-sm hover:bg-gray-100 transition-colors"

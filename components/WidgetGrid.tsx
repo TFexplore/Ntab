@@ -9,9 +9,10 @@ import EditShortcutModal from './EditShortcutModal';
 interface WidgetGridProps {
     desktopId: string;
     onSetWallpaperRequest: () => void;
+    onOpenWindow: (widget: Widget) => void;
 }
 
-const WidgetGrid: React.FC<WidgetGridProps> = ({ desktopId, onSetWallpaperRequest }) => {
+const WidgetGrid: React.FC<WidgetGridProps> = ({ desktopId, onSetWallpaperRequest, onOpenWindow }) => {
   const [widgets, setWidgets] = useState<Widget[]>([]);
 
   // Load widgets when desktopId changes
@@ -207,6 +208,20 @@ const WidgetGrid: React.FC<WidgetGridProps> = ({ desktopId, onSetWallpaperReques
      if (contextMenu.visible) setContextMenu({ ...contextMenu, visible: false });
   }
 
+  // --- Interaction Handlers ---
+  const handleWidgetClick = (e: React.MouseEvent, widget: Widget) => {
+    if (dragState.isDragging || (dragState.startX !== e.clientX)) {
+         e.preventDefault();
+         return;
+    }
+
+    if (widget.openMethod === 'window') {
+        e.preventDefault();
+        onOpenWindow(widget);
+    }
+    // Else let standard anchor behavior happen (open in new tab)
+  };
+
 
   // --- Render Helpers ---
 
@@ -267,9 +282,7 @@ const WidgetGrid: React.FC<WidgetGridProps> = ({ desktopId, onSetWallpaperReques
                 href={widget.url} 
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => {
-                    if (dragState.isDragging || (dragState.startX !== e.clientX)) e.preventDefault();
-                }}
+                onClick={(e) => handleWidgetClick(e, widget)}
                 className="w-full h-full block"
                 draggable={false}
               >

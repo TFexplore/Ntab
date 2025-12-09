@@ -9,7 +9,8 @@ import AIChat from './components/AIChat';
 import AIFloatingButton from './components/AIFloatingButton';
 import WallpaperModal from './components/WallpaperModal';
 import AddDesktopModal from './components/AddDesktopModal';
-import { Desktop } from './types';
+import IframeWindow from './components/IframeWindow';
+import { Desktop, Widget, WindowState } from './types';
 import { DEFAULT_BACKGROUND } from './constants';
 
 const App: React.FC = () => {
@@ -31,6 +32,9 @@ const App: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] = useState(false);
   const [isAddDesktopModalOpen, setIsAddDesktopModalOpen] = useState(false);
+
+  // Windows State
+  const [windows, setWindows] = useState<WindowState[]>([]);
 
   // Persistence
   useEffect(() => {
@@ -69,6 +73,67 @@ const App: React.FC = () => {
       ));
   };
 
+  // Window Management Handlers
+  const handleOpenWindow = (widget: Widget) => {
+    setWindows(prev => {
+        const existing = prev.find(w => w.id === widget.id);
+        // Base z-index for windows is 60 (above desktop content which is ~10-50)
+        const maxZ = Math.max(60, ...prev.map(w => w.zIndex)) + 1;
+
+        if (existing) {
+            // Bring to front and restore if minimized
+            return prev.map(w => w.id === widget.id ? { ...w, isMinimized: false, zIndex: maxZ } : w);
+        }
+        
+        // Create new window
+        const screenW = window.innerWidth;
+        const screenH = window.innerHeight;
+        const widthPercent = widget.windowConfig?.widthPercent || 60;
+        const heightPercent = widget.windowConfig?.heightPercent || 70;
+        
+        const w = (screenW * widthPercent) / 100;
+        const h = (screenH * heightPercent) / 100;
+
+        return [...prev, {
+            id: widget.id,
+            url: widget.url || '',
+            title: widget.title || 'Window',
+            icon: widget.icon,
+            iconText: widget.iconText,
+            backgroundColor: widget.backgroundColor,
+            position: { x: (screenW - w) / 2, y: (screenH - h) / 2 },
+            size: { width: w, height: h },
+            isMinimized: false,
+            isMaximized: false,
+            zIndex: maxZ
+        }];
+    });
+  };
+
+  const handleCloseWindow = (id: string) => {
+      setWindows(prev => prev.filter(w => w.id !== id));
+  };
+
+  const handleMinimizeWindow = (id: string) => {
+      setWindows(prev => prev.map(w => w.id === id ? { ...w, isMinimized: true } : w));
+  };
+
+  const handleMaximizeWindow = (id: string) => {
+      setWindows(prev => prev.map(w => w.id === id ? { ...w, isMaximized: !w.isMaximized } : w));
+  };
+
+  const handleFocusWindow = (id: string) => {
+      setWindows(prev => {
+        const maxZ = Math.max(60, ...prev.map(w => w.zIndex)) + 1;
+        return prev.map(w => w.id === id ? { ...w, zIndex: maxZ } : w);
+      });
+  };
+
+  const handleUpdateWindow = (id: string, updates: Partial<WindowState>) => {
+      setWindows(prev => prev.map(w => w.id === id ? { ...w, ...updates } : w));
+  };
+
+
   const bgStyle = {
     backgroundImage: `url(${wallpaper})`,
     backgroundSize: 'cover',
@@ -85,8 +150,10 @@ const App: React.FC = () => {
       <Sidebar 
         desktops={desktops}
         activeDesktopId={activeDesktopId} 
+        minimizedWindows={windows.filter(w => w.isMinimized)}
         onSwitchDesktop={handleSwitchDesktop} 
         onAddDesktop={() => setIsAddDesktopModalOpen(true)}
+        onRestoreWindow={(id) => handleFocusWindow(id)}
       />
 
       {/* Main Content Area */}
@@ -111,6 +178,7 @@ const App: React.FC = () => {
                 <WidgetGrid 
                     desktopId={activeDesktopId}
                     onSetWallpaperRequest={() => setIsWallpaperModalOpen(true)} 
+                    onOpenWindow={handleOpenWindow}
                 />
             </div>
 
@@ -119,6 +187,19 @@ const App: React.FC = () => {
         {/* Footer */}
         <QuoteFooter />
       </main>
+
+      {/* Render Active Windows */}
+      {windows.map(win => (
+          <IframeWindow
+            key={win.id}
+            windowState={win}
+            onClose={handleCloseWindow}
+            onMinimize={handleMinimizeWindow}
+            onMaximize={handleMaximizeWindow}
+            onFocus={handleFocusWindow}
+            onUpdate={handleUpdateWindow}
+          />
+      ))}
 
       {/* Floating AI Button */}
       <AIFloatingButton onClick={() => setIsChatOpen(!isChatOpen)} />

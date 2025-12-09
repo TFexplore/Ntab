@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Bot, Sparkles } from 'lucide-react';
 
@@ -63,7 +64,7 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ onClick }) => {
         left: position.x,
         top: position.y,
         position: 'fixed',
-        zIndex: 100,
+        zIndex: 500,
       }}
       className="cursor-pointer select-none touch-none"
       onMouseDown={handleMouseDown}

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Bot, Loader2 } from 'lucide-react';
 import { ChatMessage } from '../types';
@@ -46,7 +47,7 @@ const AIChat: React.FC<AIChatProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed right-4 top-4 bottom-4 w-96 glass-panel rounded-2xl flex flex-col shadow-2xl z-40 animate-in slide-in-from-right-4 duration-300">
+    <div className="fixed right-4 top-4 bottom-4 w-96 glass-panel rounded-2xl flex flex-col shadow-2xl z-[150] animate-in slide-in-from-right-4 duration-300">
       {/* Header */}
       <div className="h-14 flex items-center justify-between px-6 border-b border-white/10 bg-gradient-to-r from-blue-900/20 to-transparent rounded-t-2xl">
         <div className="flex items-center gap-3">

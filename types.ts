@@ -29,6 +29,7 @@ export enum SidebarTab {
 
 export type WidgetType = 'shortcut' | 'memo';
 export type WidgetSize = 'small' | 'medium' | 'large';
+export type WidgetOpenMethod = 'tab' | 'window';
 
 export interface Widget {
   id: string;
@@ -41,6 +42,11 @@ export interface Widget {
   position: { x: number; y: number };
   size: WidgetSize;
   zIndex: number;
+  openMethod?: WidgetOpenMethod;
+  windowConfig?: {
+    widthPercent: number; // 20-100
+    heightPercent: number; // 20-100
+  };
 }
 
 export interface ContextMenuState {
@@ -55,4 +61,18 @@ export interface Desktop {
   label: string;
   icon: string; // Key for the icon component
   wallpaper: string;
+}
+
+export interface WindowState {
+  id: string; // usually widget id
+  url: string;
+  title: string;
+  icon?: string;
+  iconText?: string;
+  backgroundColor?: string;
+  position: { x: number; y: number };
+  size: { width: number; height: number };
+  isMinimized: boolean;
+  isMaximized: boolean;
+  zIndex: number;
 }

@@ -1,19 +1,28 @@
 
 import React from 'react';
-import { SidebarTab, Desktop } from '../types';
+import { SidebarTab, Desktop, WindowState } from '../types';
 import { BOTTOM_SIDEBAR_ITEMS, ICON_MAP } from '../constants';
 import { Plus } from 'lucide-react';
 
 interface SidebarProps {
   desktops: Desktop[];
   activeDesktopId: string;
+  minimizedWindows: WindowState[];
   onSwitchDesktop: (id: string) => void;
   onAddDesktop: () => void;
+  onRestoreWindow: (id: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ desktops, activeDesktopId, onSwitchDesktop, onAddDesktop }) => {
+const Sidebar: React.FC<SidebarProps> = ({ 
+  desktops, 
+  activeDesktopId, 
+  minimizedWindows,
+  onSwitchDesktop, 
+  onAddDesktop,
+  onRestoreWindow
+}) => {
   return (
-    <div className="h-screen w-16 glass-panel flex flex-col items-center py-6 z-50 text-white/70 shadow-2xl">
+    <div className="relative h-screen w-16 glass-panel flex flex-col items-center py-6 z-[180] text-white/70 shadow-2xl">
       
       {/* Logo Area */}
       <div className="mb-8 p-2 rounded-xl bg-blue-600 text-white font-bold text-xl cursor-pointer hover:scale-110 transition-transform">
@@ -61,6 +70,38 @@ const Sidebar: React.FC<SidebarProps> = ({ desktops, activeDesktopId, onSwitchDe
                添加桌面 (Add Desktop)
             </div>
         </div>
+
+        {/* Minimized Windows Separator if needed */}
+        {minimizedWindows.length > 0 && (
+            <div className="w-8 h-px bg-white/10 my-2"></div>
+        )}
+
+        {/* Minimized Windows */}
+        {minimizedWindows.map((win) => (
+             <div 
+                key={win.id}
+                className="group relative flex items-center justify-center w-full cursor-pointer"
+                onClick={() => onRestoreWindow(win.id)}
+             >
+               <div 
+                    className="w-10 h-10 rounded-xl transition-all duration-200 hover:scale-110 flex items-center justify-center shadow-lg border border-white/10 overflow-hidden"
+                    style={{ background: win.backgroundColor || '#3b82f6' }}
+               >
+                   {win.icon ? (
+                       <img src={win.icon} alt="" className="w-full h-full object-cover opacity-80 group-hover:opacity-100" />
+                   ) : (
+                       <span className="text-xs font-bold text-white">{win.iconText}</span>
+                   )}
+                   {/* Mini overlay icon to indicate window */}
+                   <div className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 bg-white rounded-sm shadow-sm opacity-50"></div>
+               </div>
+               
+                {/* Tooltip */}
+                <div className="absolute left-full ml-4 px-2 py-1 bg-black/80 text-xs text-white rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap backdrop-blur-sm z-[60]">
+                    {win.title} (Window)
+                 </div>
+             </div>
+        ))}
 
       </div>
 

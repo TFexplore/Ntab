@@ -31,7 +31,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ state, onClose, onAction }) =
   return (
     <div
       ref={menuRef}
-      className="fixed z-[100] w-48 bg-white/90 backdrop-blur-xl rounded-lg shadow-2xl border border-white/20 py-1.5 animate-in fade-in zoom-in-95 duration-100"
+      className="fixed z-[9999] w-48 bg-white/90 backdrop-blur-xl rounded-lg shadow-2xl border border-white/20 py-1.5 animate-in fade-in zoom-in-95 duration-100"
       style={{ top: state.y, left: state.x }}
     >
       <div className="flex flex-col text-sm text-gray-700">
