@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from './components/Sidebar';
 import Clock from './components/Clock';
 import SearchBar from './components/SearchBar';
@@ -35,6 +35,9 @@ const App: React.FC = () => {
 
   // Windows State
   const [windows, setWindows] = useState<WindowState[]>([]);
+  
+  // Ref for scroll debouncing
+  const lastScrollTime = useRef(0);
 
   // Persistence
   useEffect(() => {
@@ -71,6 +74,28 @@ const App: React.FC = () => {
       setDesktops(prev => prev.map(d => 
           d.id === activeDesktopId ? { ...d, wallpaper: url } : d
       ));
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    // Only switch desktops if no windows are open and no modals are active
+    if (windows.length > 0 || isChatOpen || isWallpaperModalOpen || isAddDesktopModalOpen) return;
+
+    // Debounce scroll events
+    const now = Date.now();
+    if (now - lastScrollTime.current < 500) return;
+
+    const direction = e.deltaY > 0 ? 1 : -1;
+    const currentIndex = desktops.findIndex(d => d.id === activeDesktopId);
+    
+    if (currentIndex === -1) return;
+
+    const nextIndex = currentIndex + direction;
+
+    // Check bounds (prevent scrolling past first or last desktop)
+    if (nextIndex >= 0 && nextIndex < desktops.length) {
+      setActiveDesktopId(desktops[nextIndex].id);
+      lastScrollTime.current = now;
+    }
   };
 
   // Window Management Handlers
@@ -143,7 +168,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden flex transition-all duration-500" style={bgStyle}>
+    <div 
+      className="relative w-screen h-screen overflow-hidden flex transition-all duration-500" 
+      style={bgStyle}
+      onWheel={handleWheel}
+    >
       {/* Dark Overlay for better text contrast */}
       <div className="absolute inset-0 bg-black/20 pointer-events-none z-0" />
       

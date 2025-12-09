@@ -22,7 +22,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   onRestoreWindow
 }) => {
   return (
-    <div className="relative h-screen w-16 glass-panel flex flex-col items-center py-6 z-[180] text-white/70 shadow-2xl">
+    <div 
+      className="relative h-screen w-16 glass-panel flex flex-col items-center py-6 z-[180] text-white/70 shadow-2xl"
+      onWheel={(e) => e.stopPropagation()}
+    >
       
       {/* Logo Area */}
       <div className="mb-8 p-2 rounded-xl bg-blue-600 text-white font-bold text-xl cursor-pointer hover:scale-110 transition-transform">

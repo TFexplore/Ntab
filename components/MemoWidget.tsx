@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Plus, Check, Trash2, Calendar } from 'lucide-react';
 import { TodoItem } from '../types';
@@ -26,7 +27,10 @@ const MemoWidget: React.FC = () => {
   };
 
   return (
-    <div className="glass-panel w-full h-full rounded-2xl flex flex-col overflow-hidden text-white shadow-lg ring-1 ring-white/10">
+    <div 
+        className="glass-panel w-full h-full rounded-2xl flex flex-col overflow-hidden text-white shadow-lg ring-1 ring-white/10"
+        onWheel={(e) => e.stopPropagation()}
+    >
       {/* Header */}
       <div className="h-12 bg-indigo-900/40 border-b border-white/5 flex items-center justify-between px-4 cursor-move">
         <div className="flex items-center gap-2">
