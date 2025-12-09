@@ -12,11 +12,6 @@ import {
 
 export const SIDEBAR_ITEMS = [
   { id: SidebarTab.HOME, icon: Home, label: 'Home' },
-  // AI Tab removed from sidebar, now a floating button
-  { id: SidebarTab.MEMO, icon: StickyNote, label: 'Memos' },
-  { id: SidebarTab.DEV, icon: Code2, label: 'Dev' },
-  { id: SidebarTab.DESIGN, icon: Palette, label: 'Design' },
-  { id: SidebarTab.TOOLS, icon: Wrench, label: 'Tools' },
 ];
 
 export const BOTTOM_SIDEBAR_ITEMS = [
