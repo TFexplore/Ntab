@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Clock from './components/Clock';
 import SearchBar from './components/SearchBar';
@@ -15,8 +15,10 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SidebarTab>(SidebarTab.HOME);
   const [isChatOpen, setIsChatOpen] = useState(false);
   
-  // Wallpaper State
-  const [wallpaper, setWallpaper] = useState(DEFAULT_BACKGROUND);
+  // Wallpaper State with persistence
+  const [wallpaper, setWallpaper] = useState(() => {
+    return localStorage.getItem('nbtab_wallpaper') || DEFAULT_BACKGROUND;
+  });
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] = useState(false);
 
   // Background style
@@ -26,6 +28,11 @@ const App: React.FC = () => {
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
   };
+
+  // Save wallpaper when it changes
+  useEffect(() => {
+    localStorage.setItem('nbtab_wallpaper', wallpaper);
+  }, [wallpaper]);
 
   const handleTabChange = (tab: SidebarTab) => {
     setActiveTab(tab);

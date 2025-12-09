@@ -11,7 +11,16 @@ interface WidgetGridProps {
 }
 
 const WidgetGrid: React.FC<WidgetGridProps> = ({ onSetWallpaperRequest }) => {
-  const [widgets, setWidgets] = useState<Widget[]>(INITIAL_WIDGETS);
+  // Load widgets from local storage or use default
+  const [widgets, setWidgets] = useState<Widget[]>(() => {
+    const saved = localStorage.getItem('nbtab_widgets');
+    return saved ? JSON.parse(saved) : INITIAL_WIDGETS;
+  });
+
+  // Save widgets to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem('nbtab_widgets', JSON.stringify(widgets));
+  }, [widgets]);
   
   // Dragging State
   const [dragState, setDragState] = useState<{

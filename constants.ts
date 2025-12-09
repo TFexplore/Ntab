@@ -31,6 +31,12 @@ export const SEARCH_ENGINES: SearchEngine[] = [
     placeholder: 'Search Bing...'
   },
   { 
+    name: 'Baidu', 
+    url: 'https://www.baidu.com/s?wd=', 
+    icon: 'https://www.baidu.com/favicon.ico',
+    placeholder: '百度一下...'
+  },
+  { 
     name: 'Google', 
     url: 'https://www.google.com/search?q=', 
     icon: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
