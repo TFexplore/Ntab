@@ -7,7 +7,7 @@ import { Plus } from 'lucide-react';
 interface SidebarProps {
   desktops: Desktop[];
   activeDesktopId: string;
-  minimizedWindows: WindowState[];
+  activeWindows: WindowState[];
   onSwitchDesktop: (id: string) => void;
   onAddDesktop: () => void;
   onRestoreWindow: (id: string) => void;
@@ -16,7 +16,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ 
   desktops, 
   activeDesktopId, 
-  minimizedWindows,
+  activeWindows,
   onSwitchDesktop, 
   onAddDesktop,
   onRestoreWindow
@@ -71,34 +71,37 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
         </div>
 
-        {/* Minimized Windows Separator if needed */}
-        {minimizedWindows.length > 0 && (
+        {/* Windows Separator */}
+        {activeWindows.length > 0 && (
             <div className="w-8 h-px bg-white/10 my-2"></div>
         )}
 
-        {/* Minimized Windows */}
-        {minimizedWindows.map((win) => (
+        {/* Active Windows List */}
+        {activeWindows.map((win) => (
              <div 
                 key={win.id}
                 className="group relative flex items-center justify-center w-full cursor-pointer"
                 onClick={() => onRestoreWindow(win.id)}
              >
+               {/* Active Indicator (Left Bar) */}
+               {!win.isMinimized && (
+                   <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-white/80 rounded-r-sm"></div>
+               )}
+
                <div 
-                    className="w-10 h-10 rounded-xl transition-all duration-200 hover:scale-110 flex items-center justify-center shadow-lg border border-white/10 overflow-hidden"
+                    className={`w-10 h-10 rounded-xl transition-all duration-200 hover:scale-110 flex items-center justify-center shadow-lg border border-white/10 overflow-hidden ${win.isMinimized ? 'opacity-50 grayscale hover:opacity-100 hover:grayscale-0' : 'opacity-100'}`}
                     style={{ background: win.backgroundColor || '#3b82f6' }}
                >
                    {win.icon ? (
-                       <img src={win.icon} alt="" className="w-full h-full object-cover opacity-80 group-hover:opacity-100" />
+                       <img src={win.icon} alt="" className="w-full h-full object-cover" />
                    ) : (
-                       <span className="text-xs font-bold text-white">{win.iconText}</span>
+                       <span className="text-xs font-bold text-white">{win.iconText || 'W'}</span>
                    )}
-                   {/* Mini overlay icon to indicate window */}
-                   <div className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 bg-white rounded-sm shadow-sm opacity-50"></div>
                </div>
                
                 {/* Tooltip */}
                 <div className="absolute left-full ml-4 px-2 py-1 bg-black/80 text-xs text-white rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap backdrop-blur-sm z-[60]">
-                    {win.title} (Window)
+                    {win.title}
                  </div>
              </div>
         ))}

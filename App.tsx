@@ -78,7 +78,7 @@ const App: React.FC = () => {
     setWindows(prev => {
         const existing = prev.find(w => w.id === widget.id);
         // Base z-index for windows is 60 (above desktop content which is ~10-50)
-        const maxZ = Math.max(60, ...prev.map(w => w.zIndex)) + 1;
+        const maxZ = Math.max(60, ...prev.map(w => w.zIndex), 60) + 1;
 
         if (existing) {
             // Bring to front and restore if minimized
@@ -124,8 +124,9 @@ const App: React.FC = () => {
 
   const handleFocusWindow = (id: string) => {
       setWindows(prev => {
-        const maxZ = Math.max(60, ...prev.map(w => w.zIndex)) + 1;
-        return prev.map(w => w.id === id ? { ...w, zIndex: maxZ } : w);
+        const maxZ = Math.max(60, ...prev.map(w => w.zIndex), 60) + 1;
+        // Ensure we un-minimize the window when focusing it via dock/click
+        return prev.map(w => w.id === id ? { ...w, zIndex: maxZ, isMinimized: false } : w);
       });
   };
 
@@ -150,7 +151,7 @@ const App: React.FC = () => {
       <Sidebar 
         desktops={desktops}
         activeDesktopId={activeDesktopId} 
-        minimizedWindows={windows.filter(w => w.isMinimized)}
+        activeWindows={windows} 
         onSwitchDesktop={handleSwitchDesktop} 
         onAddDesktop={() => setIsAddDesktopModalOpen(true)}
         onRestoreWindow={(id) => handleFocusWindow(id)}
