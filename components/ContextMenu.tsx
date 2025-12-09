@@ -42,7 +42,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ state, onClose, onAction }) =
                 className="flex items-center gap-2 px-4 py-2 hover:bg-blue-500 hover:text-white transition-colors text-left"
             >
                 <Plus size={14} />
-                <span>添加应用 (Add App)</span>
+                <span>添加应用</span>
             </button>
             <div className="h-px bg-gray-200 my-1 mx-2"></div>
             <button
@@ -50,7 +50,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ state, onClose, onAction }) =
                 className="flex items-center gap-2 px-4 py-2 hover:bg-blue-500 hover:text-white transition-colors text-left"
             >
                 <Image size={14} />
-                <span>设置壁纸 (Wallpaper)</span>
+                <span>设置壁纸</span>
             </button>
           </>
         )}
