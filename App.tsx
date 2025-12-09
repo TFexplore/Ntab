@@ -17,7 +17,7 @@ const App: React.FC = () => {
   
   // Wallpaper State with persistence
   const [wallpaper, setWallpaper] = useState(() => {
-    return localStorage.getItem('nbtab_wallpaper') || DEFAULT_BACKGROUND;
+    return localStorage.getItem('nbtab_wallpaper') || 'https://oss.nbtab.com/public/xxoo/d9727495-e303-4081-b0f0-73268b05dcf8.png?imageView2/2/w/1920';
   });
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] = useState(false);
 

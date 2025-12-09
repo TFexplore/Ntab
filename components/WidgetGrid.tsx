@@ -244,6 +244,8 @@ const WidgetGrid: React.FC<WidgetGridProps> = ({ onSetWallpaperRequest }) => {
             {widget.type === 'shortcut' && (
               <a 
                 href={widget.url} 
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={(e) => {
                     if (dragState.isDragging || (dragState.startX !== e.clientX)) e.preventDefault();
                 }}

@@ -31,7 +31,7 @@ const SearchBar: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    window.location.href = `${activeEngine.url}${encodeURIComponent(query)}`;
+    window.open(`${activeEngine.url}${encodeURIComponent(query)}`, '_blank');
   };
 
   // Close dropdown when clicking outside
