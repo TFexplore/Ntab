@@ -49,3 +49,10 @@ export interface ContextMenuState {
   y: number;
   targetId?: string; // ID of the widget clicked, or undefined if background
 }
+
+export interface Desktop {
+  id: string;
+  label: string;
+  icon: string; // Key for the icon component
+  wallpaper: string;
+}

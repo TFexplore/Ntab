@@ -7,7 +7,15 @@ import {
   Code2, 
   Palette, 
   Wrench, 
-  Settings, 
+  Settings,
+  Briefcase,
+  Gamepad2,
+  Coffee,
+  Music,
+  Video,
+  Book,
+  Globe,
+  Zap
 } from 'lucide-react';
 
 export const SIDEBAR_ITEMS = [
@@ -17,6 +25,23 @@ export const SIDEBAR_ITEMS = [
 export const BOTTOM_SIDEBAR_ITEMS = [
   { id: SidebarTab.SETTINGS, icon: Settings, label: 'Settings' },
 ];
+
+export const ICON_MAP: Record<string, any> = {
+  'Home': Home,
+  'Briefcase': Briefcase,
+  'Code': Code2,
+  'Design': Palette,
+  'Game': Gamepad2,
+  'Life': Coffee,
+  'Music': Music,
+  'Video': Video,
+  'Study': Book,
+  'Web': Globe,
+  'Tools': Wrench,
+  'Zap': Zap,
+};
+
+export const AVAILABLE_ICONS = Object.keys(ICON_MAP);
 
 export const SEARCH_ENGINES: SearchEngine[] = [
   { 

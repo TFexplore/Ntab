@@ -7,20 +7,41 @@ import ContextMenu from './ContextMenu';
 import EditShortcutModal from './EditShortcutModal';
 
 interface WidgetGridProps {
+    desktopId: string;
     onSetWallpaperRequest: () => void;
 }
 
-const WidgetGrid: React.FC<WidgetGridProps> = ({ onSetWallpaperRequest }) => {
-  // Load widgets from local storage or use default
-  const [widgets, setWidgets] = useState<Widget[]>(() => {
-    const saved = localStorage.getItem('nbtab_widgets');
-    return saved ? JSON.parse(saved) : INITIAL_WIDGETS;
-  });
+const WidgetGrid: React.FC<WidgetGridProps> = ({ desktopId, onSetWallpaperRequest }) => {
+  const [widgets, setWidgets] = useState<Widget[]>([]);
+
+  // Load widgets when desktopId changes
+  useEffect(() => {
+    const storageKey = `nbtab_widgets_${desktopId}`;
+    const saved = localStorage.getItem(storageKey);
+    
+    if (saved) {
+      setWidgets(JSON.parse(saved));
+    } else {
+        // Migration support: check old key for home
+        if (desktopId === 'home') {
+             const legacy = localStorage.getItem('nbtab_widgets');
+             if (legacy) {
+                 setWidgets(JSON.parse(legacy));
+             } else {
+                 setWidgets(INITIAL_WIDGETS);
+             }
+        } else {
+             setWidgets([]);
+        }
+    }
+  }, [desktopId]);
 
   // Save widgets to local storage whenever they change
   useEffect(() => {
-    localStorage.setItem('nbtab_widgets', JSON.stringify(widgets));
-  }, [widgets]);
+    if (widgets) {
+        localStorage.setItem(`nbtab_widgets_${desktopId}`, JSON.stringify(widgets));
+    }
+  }, [widgets, desktopId]);
   
   // Dragging State
   const [dragState, setDragState] = useState<{
